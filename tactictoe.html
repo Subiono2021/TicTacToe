@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe - dengan Teori Matematika</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #1a2a6c;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        
+        .game-settings {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .setting-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        select {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background: white;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .stat {
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .status {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 10px;
+            background-color: #f0f0f0;
+            color: #333;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .board-container {
+            position: relative;
+            display: inline-block;
+            margin: 20px auto;
+        }
+        
+        .board {
+            display: grid;
+            grid-gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .cell {
+            background-color: #fff;
+            border: 2px solid #1a2a6c;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            aspect-ratio: 1 / 1;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .cell:hover {
+            background-color: #f5f5f5;
+            transform: scale(1.05);
+        }
+        
+        .cell.x {
+            color: #e74c3c;
+        }
+        
+        .cell.o {
+            color: #3498db;
+        }
+        
+        .winning-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, #2ecc71, transparent);
+            border-radius: 10px;
+            z-index: 3;
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.7);
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .instructions {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            text-align: left;
+            border-left: 5px solid #1a2a6c;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .instructions h3 {
+            color: #1a2a6c;
+            margin-bottom: 10px;
+        }
+        
+        .instructions p {
+            margin-bottom: 8px;
+            color: #555;
+            line-height: 1.5;
+        }
+        
+        .math-section {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #4a6fa5;
+        }
+        
+        .math-section h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .math-content {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .latex {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .win {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        
+        .lose {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        
+        .draw {
+            background-color: #fff3cd;
+            color: #856404;
+            border-color: #ffeaa7;
+        }
+        
+        @media (max-width: 500px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .cell {
+                font-size: 1.5rem;
+            }
+            
+            .game-settings {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TIC-TAC-TOE</h1>
+        <p class="subtitle">Lawan komputer dengan berbagai ukuran papan!</p>
+        
+        <div class="game-settings">
+            <div class="setting-group">
+                <label for="boardSize">Ukuran Papan:</label>
+                <select id="boardSize">
+                    <option value="3">3x3</option>
+                    <option value="4">4x4</option>
+                    <option value="5">5x5</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label for="difficulty">Tingkat Kesulitan:</label>
+                <select id="difficulty">
+                    <option value="easy">Mudah</option>
+                    <option value="medium" selected>Sedang</option>
+                    <option value="hard">Sulit</option>
+                    <option value="impossible">Mustahil</option>
+                </select>
+            </div>
+            <div class="stats">
+                <div class="stat">Menang: <span id="wins">0</span></div>
+                <div class="stat">Kalah: <span id="losses">0</span></div>
+                <div class="stat">Seri: <span id="draws">0</span></div>
+            </div>
+        </div>
+        
+        <div class="status" id="status">Giliran Anda (X)</div>
+        
+        <div class="board-container">
+            <div class="board" id="board">
+                <!-- Sel-sel papan akan diisi oleh JavaScript -->
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="restart">Mulai Ulang</button>
+            <button id="switch">Ganti Pemain Awal</button>
+            <button id="instructionsBtn">Instruksi & Matematika</button>
+        </div>
+        
+        <div class="instructions">
+            <h3>Fondasi Matematika Tic-Tac-Toe</h3>
+            
+            <div class="math-section">
+                <h4>1. Teori Grup dan Simetri</h4>
+                <div class="math-content">
+                    <p>Papan Tic-Tac-Toe memiliki grup simetri D₄ (grup dihedral orde 8) yang terdiri dari:</p>
+                    <div class="latex">
+                        \[
+                        G = \{R_0, R_{90}, R_{180}, R_{270}, H, V, D, D'\}
+                        \]
+                    </div>
+                    <p>di mana:</p>
+                    <ul>
+                        <li>\(R_\theta\): Rotasi sebesar \(\theta\) derajat</li>
+                        <li>\(H, V\): Refleksi horizontal dan vertikal</li>
+                        <li>\(D, D'\): Refleksi diagonal</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="math-section">
+                <h4>2. Kompleksitas Kombinatorial</h4>
+                <div class="math-content">
+                    <p>Jumlah state total untuk papan \(n \times n\):</p>
+                    <div class="latex">
+                        \[
+                        3^{n^2}
+                        \]
+                    </div>
+                    <p>Untuk papan 3×3: \(3^9 = 19,683\) state</p>
+                    <p>Dengan reduksi simetri, state unik berkurang menjadi sekitar 765.</p>
+                </div>
+            </div>
+            
+            <div class="math-section">
+                <h4>3. Teori Graf Permainan</h4>
+                <div class="math-content">
+                    <p>State permainan membentuk graf berarah dengan:</p>
+                    <div class="latex">
+                        \[
+                        V \approx 5,478 \text{ vertex}, \quad E \approx 21,452 \text{ edge}
+                        \]
+                    </div>
+                    <p>Graf ini memiliki automorfisme yang sesuai dengan simetri D₄.</p>
+                </div>
+            </div>
+            
+            <div class="math-section">
+                <h4>4. Teori Permainan dan Nilai</h4>
+                <div class="math-content">
+                    <p>Berdasarkan teorema Zermelo, Tic-Tac-Toe memiliki nilai permainan:</p>
+                    <div class="latex">
+                        \[
+                        \text{val}(X) = 0, \quad \text{val}(O) = 0
+                        \]
+                    </div>
+                    <p>Dengan permainan sempurna, hasil selalu seri (Nash equilibrium).</p>
+                </div>
+            </div>
+            
+            <div class="math-section">
+                <h4>5. Aljabar Linear dan Representasi</h4>
+                <div class="math-content">
+                    <p>State dapat dianalisis menggunakan teori representasi grup. Tabel karakter untuk D₄:</p>
+                    <div class="latex">
+                        \[
+                        \begin{array}{c|ccccc}
+                        & e & \{r,r^3\} & r^2 & \{s,sr^2\} & \{sr,sr^3\} \\
+                        \hline
+                        \chi_1 & 1 & 1 & 1 & 1 & 1 \\
+                        \chi_2 & 1 & 1 & 1 & -1 & -1 \\
+                        \chi_3 & 1 & -1 & 1 & 1 & -1 \\
+                        \chi_4 & 1 & -1 & 1 & -1 & 1 \\
+                        \chi_5 & 2 & 0 & -2 & 0 & 0 \\
+                        \end{array}
+                        \]
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elemen DOM
+            const boardElement = document.getElementById('board');
+            const boardContainer = document.querySelector('.board-container');
+            const statusElement = document.getElementById('status');
+            const restartButton = document.getElementById('restart');
+            const switchButton = document.getElementById('switch');
+            const instructionsBtn = document.getElementById('instructionsBtn');
+            const difficultySelect = document.getElementById('difficulty');
+            const boardSizeSelect = document.getElementById('boardSize');
+            const winsElement = document.getElementById('wins');
+            const lossesElement = document.getElementById('losses');
+            const drawsElement = document.getElementById('draws');
+            
+            // Variabel permainan
+            let boardSize = 3;
+            let board = [];
+            let currentPlayer = 'X';
+            let gameActive = true;
+            let playerStarts = true;
+            let waitingForComputer = false;
+            let wins = 0, losses = 0, draws = 0;
+            let winningCombo = null;
+            
+            // Inisialisasi papan berdasarkan ukuran
+            function initializeBoard() {
+                boardSize = parseInt(boardSizeSelect.value);
+                const totalCells = boardSize * boardSize;
+                board = Array(totalCells).fill('');
+                winningCombo = null;
+                
+                // Hapus garis kemenangan sebelumnya
+                document.querySelectorAll('.winning-line').forEach(line => line.remove());
+                
+                // Atur ukuran grid dan sel berdasarkan ukuran papan
+                boardElement.style.gridTemplateColumns = `repeat(${boardSize}, 1fr)`;
+                const cellSize = boardSize === 3 ? '90px' : boardSize === 4 ? '70px' : '60px';
+                
+                boardElement.innerHTML = '';
+                for (let i = 0; i < totalCells; i++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.style.width = cellSize;
+                    cell.style.height = cellSize;
+                    cell.setAttribute('data-index', i);
+                    cell.addEventListener('click', () => handleCellClick(i));
+                    boardElement.appendChild(cell);
+                }
+                
+                // Reset status permainan
+                updateStatus();
+                
+                // Jika komputer mulai, tunggu hingga pemain mengklik sel
+                if (!playerStarts && gameActive) {
+                    statusElement.textContent = "Klik sel mana saja untuk memulai (Komputer akan mulai)";
+                }
+            }
+            
+            // Fungsi untuk menghasilkan kondisi kemenangan berdasarkan ukuran papan
+            function generateWinConditions(size) {
+                const conditions = [];
+                
+                // Baris
+                for (let row = 0; row < size; row++) {
+                    for (let col = 0; col <= size - 3; col++) {
+                        const condition = [];
+                        for (let k = 0; k < 3; k++) {
+                            condition.push(row * size + col + k);
+                        }
+                        conditions.push(condition);
+                    }
+                }
+                
+                // Kolom
+                for (let col = 0; col < size; col++) {
+                    for (let row = 0; row <= size - 3; row++) {
+                        const condition = [];
+                        for (let k = 0; k < 3; k++) {
+                            condition.push((row + k) * size + col);
+                        }
+                        conditions.push(condition);
+                    }
+                }
+                
+                // Diagonal (kiri atas ke kanan bawah)
+                for (let row = 0; row <= size - 3; row++) {
+                    for (let col = 0; col <= size - 3; col++) {
+                        const condition = [];
+                        for (let k = 0; k < 3; k++) {
+                            condition.push((row + k) * size + col + k);
+                        }
+                        conditions.push(condition);
+                    }
+                }
+                
+                // Diagonal (kanan atas ke kiri bawah)
+                for (let row = 0; row <= size - 3; row++) {
+                    for (let col = 2; col < size; col++) {
+                        const condition = [];
+                        for (let k = 0; k < 3; k++) {
+                            condition.push((row + k) * size + col - k);
+                        }
+                        conditions.push(condition);
+                    }
+                }
+                
+                return conditions;
+            }
+            
+            // Fungsi untuk menangani klik sel
+            function handleCellClick(index) {
+                if (!gameActive || board[index] !== '' || waitingForComputer) return;
+                
+                // Jika komputer yang mulai, langkah pertama pemain hanya untuk memulai permainan
+                if (!playerStarts && board.every(cell => cell === '')) {
+                    // Langkah pertama komputer
+                    waitingForComputer = true;
+                    setTimeout(() => {
+                        const computerMove = getComputerMove();
+                        makeMove(computerMove, 'X');
+                        waitingForComputer = false;
+                        
+                        // Setelah komputer bergerak, giliran pemain (O)
+                        currentPlayer = 'O';
+                        updateStatus();
+                    }, 600);
+                    return;
+                }
+                
+                // Langkah pemain normal
+                const playerSymbol = playerStarts ? 'X' : 'O';
+                
+                if (currentPlayer === playerSymbol) {
+                    makeMove(index, playerSymbol);
+                    
+                    // Cek hasil setelah langkah pemain
+                    const winResult = checkWin(playerSymbol);
+                    if (winResult) {
+                        endGame('win', winResult);
+                        return;
+                    }
+                    
+                    if (isBoardFull()) {
+                        endGame('draw');
+                        return;
+                    }
+                    
+                    // Giliran komputer
+                    currentPlayer = playerStarts ? 'O' : 'X';
+                    updateStatus();
+                    
+                    waitingForComputer = true;
+                    setTimeout(() => {
+                        const computerMove = getComputerMove();
+                        makeMove(computerMove, currentPlayer);
+                        
+                        const winResult = checkWin(currentPlayer);
+                        if (winResult) {
+                            endGame('lose', winResult);
+                            return;
+                        }
+                        
+                        if (isBoardFull()) {
+                            endGame('draw');
+                            return;
+                        }
+                        
+                        // Kembali ke giliran pemain
+                        currentPlayer = playerStarts ? 'X' : 'O';
+                        updateStatus();
+                        waitingForComputer = false;
+                    }, 600);
+                }
+            }
+            
+            // Fungsi untuk melakukan langkah
+            function makeMove(index, player) {
+                board[index] = player;
+                const cell = document.querySelector(`.cell[data-index="${index}"]`);
+                cell.textContent = player;
+                cell.classList.add(player.toLowerCase());
+            }
+            
+            // Fungsi untuk mendapatkan langkah komputer berdasarkan tingkat kesulitan
+            function getComputerMove() {
+                const difficulty = difficultySelect.value;
+                
+                if (difficulty === 'easy') {
+                    return getRandomMove();
+                } else if (difficulty === 'medium') {
+                    // 70% langkah bagus, 30% acak
+                    return Math.random() < 0.7 ? getSmartMove() : getRandomMove();
+                } else if (difficulty === 'hard') {
+                    // 90% langkah bagus, 10% acak
+                    return Math.random() < 0.9 ? getSmartMove() : getRandomMove();
+                } else { // impossible
+                    return getPerfectMove();
+                }
+            }
+            
+            // Langkah acak
+            function getRandomMove() {
+                const availableMoves = board
+                    .map((cell, index) => cell === '' ? index : null)
+                    .filter(cell => cell !== null);
+                return availableMoves[Math.floor(Math.random() * availableMoves.length)];
+            }
+            
+            // Langkah cerdas
+            function getSmartMove() {
+                const playerSymbol = playerStarts ? 'X' : 'O';
+                const computerSymbol = playerStarts ? 'O' : 'X';
+                const winConditions = generateWinConditions(boardSize);
+                
+                // 1. Coba menang
+                for (let i = 0; i < board.length; i++) {
+                    if (board[i] === '') {
+                        board[i] = computerSymbol;
+                        if (checkWin(computerSymbol)) {
+                            board[i] = '';
+                            return i;
+                        }
+                        board[i] = '';
+                    }
+                }
+                
+                // 2. Coba blok pemain
+                for (let i = 0; i < board.length; i++) {
+                    if (board[i] === '') {
+                        board[i] = playerSymbol;
+                        if (checkWin(playerSymbol)) {
+                            board[i] = '';
+                            return i;
+                        }
+                        board[i] = '';
+                    }
+                }
+                
+                // 3. Pilih tengah jika tersedia (prioritas untuk papan 3x3)
+                if (boardSize === 3) {
+                    const center = Math.floor(boardSize * boardSize / 2);
+                    if (board[center] === '') {
+                        return center;
+                    }
+                }
+                
+                // 4. Pilih sudut acak
+                const corners = getCornerCells();
+                const availableCorners = corners.filter(i => board[i] === '');
+                if (availableCorners.length > 0) {
+                    return availableCorners[Math.floor(Math.random() * availableCorners.length)];
+                }
+                
+                // 5. Pilih sisi acak
+                const sides = getSideCells();
+                const availableSides = sides.filter(i => board[i] === '');
+                if (availableSides.length > 0) {
+                    return availableSides[Math.floor(Math.random() * availableSides.length)];
+                }
+                
+                return getRandomMove();
+            }
+            
+            // Mendapatkan sel sudut berdasarkan ukuran papan
+            function getCornerCells() {
+                const corners = [];
+                corners.push(0); // kiri atas
+                corners.push(boardSize - 1); // kanan atas
+                corners.push(boardSize * (boardSize - 1)); // kiri bawah
+                corners.push(boardSize * boardSize - 1); // kanan bawah
+                return corners;
+            }
+            
+            // Mendapatkan sel sisi berdasarkan ukuran papan
+            function getSideCells() {
+                const sides = [];
+                // Atas (kecuali sudut)
+                for (let col = 1; col < boardSize - 1; col++) {
+                    sides.push(col);
+                }
+                // Bawah (kecuali sudut)
+                for (let col = 1; col < boardSize - 1; col++) {
+                    sides.push(boardSize * (boardSize - 1) + col);
+                }
+                // Kiri (kecuali sudut)
+                for (let row = 1; row < boardSize - 1; row++) {
+                    sides.push(row * boardSize);
+                }
+                // Kanan (kecuali sudut)
+                for (let row = 1; row < boardSize - 1; row++) {
+                    sides.push(row * boardSize + boardSize - 1);
+                }
+                return sides;
+            }
+            
+            // Langkah sempurna (hanya untuk 3x3)
+            function getPerfectMove() {
+                // Untuk papan selain 3x3, gunakan strategi smart move
+                if (boardSize !== 3) {
+                    return getSmartMove();
+                }
+                
+                const computerSymbol = playerStarts ? 'O' : 'X';
+                const playerSymbol = playerStarts ? 'X' : 'O';
+                
+                // Coba menang
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = computerSymbol;
+                        if (checkWin(computerSymbol)) {
+                            board[i] = '';
+                            return i;
+                        }
+                        board[i] = '';
+                    }
+                }
+                
+                // Coba blok
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = playerSymbol;
+                        if (checkWin(playerSymbol)) {
+                            board[i] = '';
+                            return i;
+                        }
+                        board[i] = '';
+                    }
+                }
+                
+                // Strategi untuk permainan sempurna
+                if (board[4] === '') return 4;
+                
+                // Jika pemain di sudut, ambil tengah sisi yang berlawanan
+                const oppositeCorners = {0:8, 2:6, 6:2, 8:0};
+                for (let corner in oppositeCorners) {
+                    if (board[corner] === playerSymbol && board[oppositeCorners[corner]] === '') {
+                        return oppositeCorners[corner];
+                    }
+                }
+                
+                // Ambil sudut kosong
+                const corners = [0, 2, 6, 8];
+                const availableCorners = corners.filter(i => board[i] === '');
+                if (availableCorners.length > 0) {
+                    return availableCorners[Math.floor(Math.random() * availableCorners.length)];
+                }
+                
+                // Ambil sisi kosong
+                const sides = [1, 3, 5, 7];
+                const availableSides = sides.filter(i => board[i] === '');
+                if (availableSides.length > 0) {
+                    return availableSides[Math.floor(Math.random() * availableSides.length)];
+                }
+                
+                return -1;
+            }
+            
+            // Fungsi untuk memeriksa kemenangan dan mengembalikan kombinasi yang menang
+            function checkWin(player) {
+                const winConditions = generateWinConditions(boardSize);
+                for (let condition of winConditions) {
+                    if (condition.every(index => board[index] === player)) {
+                        return condition; // Kembalikan kombinasi yang menang
+                    }
+                }
+                return null;
+            }
+            
+            // Fungsi untuk menggambar garis kemenangan
+            function drawWinningLine(winningCombo) {
+                // Hapus garis kemenangan sebelumnya
+                document.querySelectorAll('.winning-line').forEach(line => line.remove());
+                
+                if (!winningCombo || winningCombo.length < 3) return;
+                
+                // Dapatkan posisi sel pertama dan terakhir dalam kombinasi menang
+                const firstCell = document.querySelector(`.cell[data-index="${winningCombo[0]}"]`);
+                const lastCell = document.querySelector(`.cell[data-index="${winningCombo[2]}"]`);
+                
+                if (!firstCell || !lastCell) return;
+                
+                // Hitung posisi dan ukuran garis
+                const boardRect = boardElement.getBoundingClientRect();
+                const firstRect = firstCell.getBoundingClientRect();
+                const lastRect = lastCell.getBoundingClientRect();
+                
+                // Hitung posisi tengah sel
+                const firstCenterX = firstRect.left - boardRect.left + firstRect.width / 2;
+                const firstCenterY = firstRect.top - boardRect.top + firstRect.height / 2;
+                const lastCenterX = lastRect.left - boardRect.left + lastRect.width / 2;
+                const lastCenterY = lastRect.top - boardRect.top + lastRect.height / 2;
+                
+                // Hitung panjang dan sudut garis
+                const length = Math.sqrt(
+                    Math.pow(lastCenterX - firstCenterX, 2) + 
+                    Math.pow(lastCenterY - firstCenterY, 2)
+                );
+                
+                const angle = Math.atan2(
+                    lastCenterY - firstCenterY, 
+                    lastCenterX - firstCenterX
+                ) * 180 / Math.PI;
+                
+                // Buat elemen garis
+                const line = document.createElement('div');
+                line.classList.add('winning-line');
+                
+                // Atur posisi dan ukuran garis
+                line.style.width = `${length}px`;
+                line.style.height = '8px';
+                line.style.left = `${firstCenterX}px`;
+                line.style.top = `${firstCenterY - 4}px`; // Tengah secara vertikal
+                line.style.transform = `rotate(${angle}deg)`;
+                line.style.transformOrigin = '0 50%';
+                
+                // Tambahkan garis ke container papan
+                boardContainer.appendChild(line);
+            }
+            
+            // Fungsi untuk memeriksa apakah papan penuh
+            function isBoardFull() {
+                return board.every(cell => cell !== '');
+            }
+            
+            // Fungsi untuk mengupdate status
+            function updateStatus() {
+                if (playerStarts) {
+                    statusElement.textContent = currentPlayer === 'X' 
+                        ? 'Giliran Anda (X)' 
+                        : 'Giliran Komputer (O)';
+                } else {
+                    statusElement.textContent = currentPlayer === 'X' 
+                        ? 'Giliran Komputer (X)' 
+                        : 'Giliran Anda (O)';
+                }
+                
+                statusElement.classList.remove('win', 'lose', 'draw');
+            }
+            
+            // Fungsi untuk mengakhiri permainan
+            function endGame(result, winningCombo = null) {
+                gameActive = false;
+                waitingForComputer = false;
+                statusElement.classList.remove('win', 'lose', 'draw');
+                
+                if (result === 'win') {
+                    statusElement.textContent = '🎉 Selamat! Anda Menang! 🎉';
+                    statusElement.classList.add('win');
+                    wins++;
+                    winsElement.textContent = wins;
+                    
+                    // Gambar garis kemenangan
+                    if (winningCombo) {
+                        drawWinningLine(winningCombo);
+                    }
+                } else if (result === 'lose') {
+                    statusElement.textContent = 'Komputer Menang! Coba Lagi!';
+                    statusElement.classList.add('lose');
+                    losses++;
+                    lossesElement.textContent = losses;
+                    
+                    // Gambar garis kemenangan untuk komputer
+                    if (winningCombo) {
+                        drawWinningLine(winningCombo);
+                    }
+                } else {
+                    statusElement.textContent = 'Permainan Seri!';
+                    statusElement.classList.add('draw');
+                    draws++;
+                    drawsElement.textContent = draws;
+                }
+            }
+            
+            // Fungsi untuk mereset permainan
+            function resetGame() {
+                board = Array(boardSize * boardSize).fill('');
+                currentPlayer = 'X';
+                gameActive = true;
+                waitingForComputer = false;
+                winningCombo = null;
+                statusElement.classList.remove('win', 'lose', 'draw');
+                
+                // Hapus garis kemenangan
+                document.querySelectorAll('.winning-line').forEach(line => line.remove());
+                
+                initializeBoard();
+            }
+            
+            // Fungsi untuk mengganti pemain awal
+            function switchStarter() {
+                playerStarts = !playerStarts;
+                currentPlayer = 'X';
+                resetGame();
+                
+                // Tampilkan pesan tentang siapa yang mulai
+                if (playerStarts) {
+                    statusElement.textContent = "Anda mulai pertama (X). Giliran Anda!";
+                } else {
+                    statusElement.textContent = "Komputer mulai pertama (X). Klik sel mana saja untuk memulai!";
+                }
+            }
+            
+            // Event listener untuk tombol restart
+            restartButton.addEventListener('click', resetGame);
+            
+            // Event listener untuk tombol ganti pemain awal
+            switchButton.addEventListener('click', switchStarter);
+            
+            // Event listener untuk tombol instruksi
+            instructionsBtn.addEventListener('click', () => {
+                alert('CARA BERMAIN:\n\n1. Pilih ukuran papan dan tingkat kesulitan\n2. Klik pada kotak kosong untuk menempatkan simbol Anda\n3. Buat 3 simbol berurutan (mendatar, menurun, atau diagonal) untuk menang\n4. Cegah lawan membuat 3 simbol berurutan\n\nTINGKAT KESULITAN:\n- Mudah: Komputer bermain acak\n- Sedang: Komputer bermain cukup baik\n- Sulit: Komputer hampir sempurna\n- Mustahil: Komputer bermain sempurna (hanya untuk 3x3)\n\nUKURAN PAPAN:\n- 3x3: Klasik, dengan 3 berurutan untuk menang\n- 4x4: Lebih menantang, dengan 3 berurutan untuk menang\n- 5x5: Paling menantang, dengan 3 berurutan untuk menang\n\nFITUR BARU:\n- Garis kemenangan akan muncul ketika ada pemenang!\n- Penjelasan matematika dengan notasi LaTeX tersedia di bawah permainan');
+            });
+            
+            // Event listener untuk perubahan tingkat kesulitan
+            difficultySelect.addEventListener('change', resetGame);
+            
+            // Event listener untuk perubahan ukuran papan
+            boardSizeSelect.addEventListener('change', resetGame);
+            
+            // Mulai permainan
+            initializeBoard();
+        });
+    </script>
+</body>
+</html>
