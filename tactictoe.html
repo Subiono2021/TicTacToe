@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic-Tac-Toe - dengan Teori Matematika</title>
+    <title>Tic-Tac-Toe - Tantangan Logika & Matematika</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
@@ -38,6 +38,14 @@
             margin-bottom: 10px;
             font-size: 2.5rem;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .game-description {
+            color: #e74c3c;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-style: italic;
         }
         
         .subtitle {
@@ -189,13 +197,15 @@
             border-radius: 10px;
             text-align: left;
             border-left: 5px solid #1a2a6c;
-            max-height: 300px;
+            max-height: 400px;
             overflow-y: auto;
         }
         
         .instructions h3 {
             color: #1a2a6c;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.4rem;
         }
         
         .instructions p {
@@ -215,6 +225,14 @@
         .math-section h4 {
             color: #2c3e50;
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .math-section h4:before {
+            content: "🧮";
+            margin-right: 8px;
+            font-size: 1.2em;
         }
         
         .math-content {
@@ -229,6 +247,15 @@
             margin: 10px 0;
             overflow-x: auto;
             font-family: 'Courier New', monospace;
+            border: 1px solid #e1e4e8;
+        }
+        
+        .math-fact {
+            background-color: #e8f4f8;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 8px 0;
+            border-left: 3px solid #3498db;
         }
         
         .win {
@@ -258,6 +285,10 @@
                 font-size: 2rem;
             }
             
+            .game-description {
+                font-size: 1.1rem;
+            }
+            
             .cell {
                 font-size: 1.5rem;
             }
@@ -272,7 +303,8 @@
 <body>
     <div class="container">
         <h1>TIC-TAC-TOE</h1>
-        <p class="subtitle">Lawan komputer dengan berbagai ukuran papan!</p>
+        <p class="game-description">Tantangan logika dan pemecahan masalah matematika.</p>
+        <p class="subtitle">Lawan komputer dengan berbagai ukuran papan dan pelajari fondasi matematikanya!</p>
         
         <div class="game-settings">
             <div class="setting-group">
@@ -331,6 +363,9 @@
                         <li>\(H, V\): Refleksi horizontal dan vertikal</li>
                         <li>\(D, D'\): Refleksi diagonal</li>
                     </ul>
+                    <div class="math-fact">
+                        <strong>Fakta Menarik:</strong> Grup D₄ memiliki 8 elemen dan 5 kelas konjugasi.
+                    </div>
                 </div>
             </div>
             
@@ -345,6 +380,9 @@
                     </div>
                     <p>Untuk papan 3×3: \(3^9 = 19,683\) state</p>
                     <p>Dengan reduksi simetri, state unik berkurang menjadi sekitar 765.</p>
+                    <div class="math-fact">
+                        <strong>Fakta Menarik:</strong> Meski ada 19,683 state mungkin, hanya 138 hasil akhir yang unik secara simetri.
+                    </div>
                 </div>
             </div>
             
@@ -358,6 +396,9 @@
                         \]
                     </div>
                     <p>Graf ini memiliki automorfisme yang sesuai dengan simetri D₄.</p>
+                    <div class="math-fact">
+                        <strong>Fakta Menarik:</strong> Setiap state dapat direpresentasikan sebagai titik dalam ruang state 9-dimensi.
+                    </div>
                 </div>
             </div>
             
@@ -371,6 +412,9 @@
                         \]
                     </div>
                     <p>Dengan permainan sempurna, hasil selalu seri (Nash equilibrium).</p>
+                    <div class="math-fact">
+                        <strong>Fakta Menarik:</strong> Tic-Tac-Toe adalah permainan deterministik dengan informasi sempurna yang selalu berakhir seri dengan permainan optimal.
+                    </div>
                 </div>
             </div>
             
@@ -390,6 +434,28 @@
                         \chi_5 & 2 & 0 & -2 & 0 & 0 \\
                         \end{array}
                         \]
+                    </div>
+                    <div class="math-fact">
+                        <strong>Fakta Menarik:</strong> Representasi 2-dimensi (\(\chi_5\)) sesuai dengan transformasi rotasi pada bidang.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="math-section">
+                <h4>6. Strategi Optimal dan Algoritma</h4>
+                <div class="math-content">
+                    <p>Algoritma Minimax dengan pemangkasan Alpha-Beta dapat menyelesaikan Tic-Tac-Toe:</p>
+                    <div class="latex">
+                        \[
+                        \text{Minimax}(s) = \begin{cases}
+                        \text{Utility}(s) & \text{jika Terminal}(s) \\
+                        \max_{a \in \text{Actions}(s)} \text{Minimax}(\text{Result}(s,a)) & \text{jika Player}(s) = \text{MAX} \\
+                        \min_{a \in \text{Actions}(s)} \text{Minimax}(\text{Result}(s,a)) & \text{jika Player}(s) = \text{MIN}
+                        \end{cases}
+                        \]
+                    </div>
+                    <div class="math-fact">
+                        <strong>Fakta Menarik:</strong> Dengan reduksi simetri, pohon permainan Tic-Tac-Toe dapat dipangkas hingga 90%, meningkatkan efisiensi algoritma.
                     </div>
                 </div>
             </div>
